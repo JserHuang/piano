@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style>
+			*{
+				padding:0;
+				margin:0;
+				list-style-type: none;
+			}
+			ul{
+				width:807px;
+				margin:100px auto;
+				border: 1px solid #000;
+				overflow:hidden;
+				height:40px;
+			}
+			ul li{
+				width:100px;
+				height:40px;
+				border-right:1px dotted red;
+				float: left;
+				position:relative;
+			}
+			ul li ins{
+				position:absolute;
+				width:100%;
+				height:100%;
+				top:40px;
+				left:0;
+			}
+        </style>
+        <script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+       	<script type="text/javascript">
+       	$(function(){
+       		// JS的入口函数是当所有资源都加载完了之后才予以执行，包括图片，并且只能写一次，如果写多个，后面的会覆盖掉前面的
+       		// JQ的入口函数是当DOM节点加载完了之后予以执行，执行效率比JS的要快，可以写多个，并且每一个入口函数都是一个单独的作用域
+       		
+       		// 变量本地化 本地化的时候注意一下后面可能会增加或者删除节点，这个时候本地化里面的元素还是之前的，有可能会带来一些问题
+       		var _ul = $('ul');
+       		var _li = $('li');
+       		var _audio = $('audio');
+       		//（1）去掉最后一个LI的边框
+       		_li.last().css('border','none');
+       		//（2）创建ins小标签，追加到li里面去
+       		var ins = $('<ins></ins>');
+       		// 将创建好的ins追击到li里面去
+       		_li.append(ins);
+       		//（3）给不同的ins追加不同的颜色
+       		var colorArr = ['red','green','blue','yellow','pink','cyan','purple','orange'];
+       		var _ins = _li.children('ins');
+       		// 遍历每一个_ins
+       		_ins.each(function(index,el){
+       			$(el).css('background',colorArr[index]);
+       		});
+       		// （4）hover到谁就让谁下面的ins滑上来，反之，下去 并且让对应声音播放出来
+       		_li.hover(function(){
+       			// 获取当前的索引值
+       			var index = $(this).index();
+       			$(this).children('ins').stop().animate({'top':0},500);
+       			// 让音乐重新加载一次
+       			_audio.get(index).load();
+       			_audio.get(index).play();
+       		},function(){
+       			$(this).children('ins').stop().animate({'top':40},500);
+       		});
+       		// （5）先找到事件  键盘按下事件
+       		$(window).keydown(function(event) {
+       			// 首先判断当前按下的按键是否是我们所要求的
+       			var code = event.keyCode;
+       			// 按钮必须是数字的1-8 （横排的）
+       			if(code >= 49 && code <= 56){
+       				// 获取当前的索引值
+       				var index = code - 49;
+       				// 让对应的事件触发
+       				// trigger就是让电脑去帮我们触发事件 ，不能直接传hover事件 因为hover是一个JQ封装的复合事件
+       				_li.eq(index).trigger('mouseenter');
+
+       				// 运用定时器让ins自动下来
+       				setTimeout(function(){
+       					_li.eq(index).trigger('mouseleave');
+       				}, 500)
+       			}
+       		});
+       	})
+       	</script>
+    </head>
+    <body>
+    	<ul>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    	</ul>
+    	<div class="musicWrap">
+    		<audio src="music/a1.mp3"></audio>
+    		<audio src="music/a2.mp3"></audio>
+    		<audio src="music/a3.mp3"></audio>
+    		<audio src="music/a4.mp3"></audio>
+    		<audio src="music/a5.mp3"></audio>
+    		<audio src="music/a6.mp3"></audio>
+    		<audio src="music/a7.mp3"></audio>
+    		<audio src="music/a8.mp3"></audio>
+    	</div>
+    </body>
+</html>
